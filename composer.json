@@ -1,0 +1,53 @@
+{
+    "name": "cerpus/edlib-resource-kit-laravel",
+    "description": "Integrate Edlib Resouce Kit with Laravel",
+    "homepage": "https://edlib.com/",
+    "license": "GPL-3.0-only",
+    "authors": [
+        {
+            "name": "Emma Cecilie Hughes",
+            "email": "emma.hughes@cerpus.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Cerpus\\EdlibResourceKitProvider\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Cerpus\\EdlibResourceKitProvider\\Tests\\": "tests"
+        }
+    },
+    "require": {
+        "php": "8.0.*|8.1.*",
+        "cerpus/edlib-resource-kit": "dev-master",
+        "cerpus/pubsub": "^1.0",
+        "guzzlehttp/guzzle": "^7.2",
+        "guzzlehttp/psr7": "^2.1",
+        "illuminate/http": "^9.0",
+        "illuminate/support": "^9.0"
+    },
+    "require-dev": {
+        "orchestra/testbench": "^7.0"
+    },
+    "repositories": [
+        {
+            "type": "git",
+            "url": "https://github.com/cerpus/php-edlib-resource-kit.git"
+        }
+    ],
+    "config": {
+        "sort-packages": true,
+        "github-oauth": {
+            "github.com": "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"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "EdlibResourceKitServiceProvider"
+            ]
+        }
+    }
+}
