@@ -76,11 +76,11 @@ class EdlibResourceKitServiceProvider extends BaseServiceProvider implements Def
 
             return new ConnectionFactory(
                 $config['host'],
-                $config['port'],
+                (int) $config['port'],
                 $config['username'],
                 $config['password'],
                 $config['vhost'],
-                $config['secure'] ?? false,
+                (bool) ($config['secure'] ?? false),
                 $config['ssl_options'] ?? [],
             );
         }
