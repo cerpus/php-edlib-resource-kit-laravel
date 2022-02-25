@@ -73,7 +73,8 @@ class Article extends Model implements EdlibResource
 }
 ~~~
 
-With the `PublishToEdlib` Edlib will now be notified upon changes to the resource.
+With the `PublishToEdlib` used, Edlib will now be notified upon changes to the
+resource.
 
 ## Declared services
 
