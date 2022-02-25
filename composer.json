@@ -30,12 +30,6 @@
     "require-dev": {
         "orchestra/testbench": "^6.0|^7.0"
     },
-    "repositories": [
-        {
-            "type": "git",
-            "url": "https://github.com/cerpus/php-edlib-resource-kit.git"
-        }
-    ],
     "config": {
         "sort-packages": true
     },
