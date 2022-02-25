@@ -25,11 +25,10 @@
         "cerpus/pubsub": "^1.0",
         "guzzlehttp/guzzle": "^7.2",
         "guzzlehttp/psr7": "^2.1",
-        "illuminate/http": "^9.0",
-        "illuminate/support": "^9.0"
+        "illuminate/support": "^8.0|^9.0"
     },
     "require-dev": {
-        "orchestra/testbench": "^7.0"
+        "orchestra/testbench": "^6.0|^7.0"
     },
     "repositories": [
         {
