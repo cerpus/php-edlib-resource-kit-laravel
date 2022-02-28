@@ -11,12 +11,13 @@ use Cerpus\EdlibResourceKit\Serializer\ResourceSerializer;
 use Cerpus\PubSub\Connection\ConnectionFactory;
 use Cerpus\PubSub\PubSub;
 use GuzzleHttp\Client;
-use GuzzleHttp\Psr7\HttpFactory;
+use Http\Discovery\Psr17FactoryDiscovery;
 use Http\Discovery\Psr18ClientDiscovery;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Contracts\Support\DeferrableProvider;
 use Illuminate\Support\ServiceProvider as BaseServiceProvider;
 use Psr\Http\Client\ClientInterface;
+use Psr\Http\Message\RequestFactoryInterface;
 use function is_array;
 
 class EdlibResourceKitServiceProvider extends BaseServiceProvider implements DeferrableProvider
@@ -61,7 +62,7 @@ class EdlibResourceKitServiceProvider extends BaseServiceProvider implements Def
             return new ResourceKit(
                 $this->createPubSub(),
                 $this->createHttpClient(),
-                new HttpFactory(),
+                $this->createRequestFactory(),
                 $this->createResourceSerializer(),
             );
         });
@@ -111,6 +112,18 @@ class EdlibResourceKitServiceProvider extends BaseServiceProvider implements Def
         }
 
         return $this->app->make($httpClientService);
+    }
+
+    private function createRequestFactory(): RequestFactoryInterface
+    {
+        $requestFactoryService = $this->app->make('config')
+            ->get('edlib-resource-kit.request-factory');
+
+        if ($requestFactoryService === null) {
+            return Psr17FactoryDiscovery::findRequestFactory();
+        }
+
+        return $this->app->make($requestFactoryService);
     }
 
     private function createResourceSerializer(): ResourceSerializer
