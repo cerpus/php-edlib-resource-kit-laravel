@@ -12,6 +12,8 @@ use Cerpus\PubSub\Connection\ConnectionFactory;
 use Cerpus\PubSub\PubSub;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\HttpFactory;
+use Http\Discovery\Psr18ClientDiscovery;
+use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Contracts\Support\DeferrableProvider;
 use Illuminate\Support\ServiceProvider as BaseServiceProvider;
 use Psr\Http\Client\ClientInterface;
@@ -90,10 +92,25 @@ class EdlibResourceKitServiceProvider extends BaseServiceProvider implements Def
 
     private function createHttpClient(): ClientInterface
     {
-        return $this->app->make(
-            $this->app->make('config')->get('edlib-resource-kit.http-client')
-                ?? Client::class,
-        );
+        $httpClientService = $this->app->make('config')
+            ->get('edlib-resource-kit.http-client');
+
+        if ($httpClientService === null) {
+            if (
+                class_exists(\GuzzleHttp\ClientInterface::class) &&
+                \GuzzleHttp\ClientInterface::MAJOR_VERSION === 7
+            ) {
+                try {
+                    // try using Guzzle 7
+                    return $this->app->make(Client::class);
+                } catch (BindingResolutionException) {
+                }
+            }
+
+            return Psr18ClientDiscovery::find();
+        }
+
+        return $this->app->make($httpClientService);
     }
 
     private function createResourceSerializer(): ResourceSerializer

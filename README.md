@@ -7,11 +7,18 @@ with Laravel.
 
 * PHP 8.0 or PHP 8.1
 * Laravel 9
+* A PSR-18 compatible HTTP client, like Guzzle 7.
 
 ## Installation
 
 ~~~sh
 composer require cerpus/edlib-resource-kit-laravel
+~~~
+
+If using Guzzle 6, you will also need an adapter:
+
+~~~sh
+composer require cerpus/edlib-resource-kit-laravel php-http/guzzle6-adapter
 ~~~
 
 ## Configuration

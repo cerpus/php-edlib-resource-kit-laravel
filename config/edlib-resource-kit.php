@@ -16,7 +16,8 @@ return [
     // To use a Cerpus\PubSub\PubSub instance from the container instead:
     //'pub-sub' => MyPubSubService::class,
 
-    'http-client' => GuzzleHttp\Client::class,
+    // By default, HTTP clients are discovered automatically
+    'http-client' => null,
 
     'resource-serializer' => Cerpus\EdlibResourceKit\Serializer\ResourceSerializer::class,
 
