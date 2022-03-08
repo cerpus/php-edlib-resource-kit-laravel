@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Cerpus\EdlibResourceKitProvider\Tests;
 
 use Cerpus\EdlibResourceKit\Resource\ResourceManagerInterface;
-use Cerpus\EdlibResourceKit\ResourceKit;
+use Cerpus\EdlibResourceKit\ResourceKitInterface;
 use Cerpus\EdlibResourceKit\ResourceVersion\ResourceVersionManagerInterface;
 use Cerpus\EdlibResourceKit\Serializer\ResourceSerializer;
 use Cerpus\PubSub\Connection\ConnectionFactory;
@@ -86,7 +86,7 @@ final class EdlibResourceKitServiceProviderTest extends TestCase
 
         $this->expectException(BindingResolutionException::class);
 
-        $this->app->make(ResourceKit::class);
+        $this->app->make(ResourceKitInterface::class);
     }
 
     public function testThrowsOnInvalidHttpClient(): void
@@ -96,7 +96,7 @@ final class EdlibResourceKitServiceProviderTest extends TestCase
 
         $this->expectException(TypeError::class);
 
-        $this->app->make(ResourceKit::class);
+        $this->app->make(ResourceKitInterface::class);
     }
 
     public function testCustomResourceSerializer(): void
@@ -114,14 +114,14 @@ final class EdlibResourceKitServiceProviderTest extends TestCase
 
         $this->expectException(TypeError::class);
 
-        $this->app->make(ResourceKit::class);
+        $this->app->make(ResourceKitInterface::class);
     }
 
     private function assertResourceKitResolves(): void
     {
         $this->assertInstanceOf(
-            ResourceKit::class,
-            $this->app->make(ResourceKit::class),
+            ResourceKitInterface::class,
+            $this->app->make(ResourceKitInterface::class),
         );
     }
 

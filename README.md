@@ -85,7 +85,7 @@ the resource.
 
 ## Declared services
 
-* `Cerpus\EdlibResourceKit\ResourceKit`
+* `Cerpus\EdlibResourceKit\ResourceKitInterface`
 * `Cerpus\EdlibResourceKit\Resource\ResourceManagerInterface`
 * `Cerpus\EdlibResourceKit\ResourceVersion\ResourceVersionManagerInterface`
 
