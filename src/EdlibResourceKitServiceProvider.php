@@ -6,6 +6,7 @@ namespace Cerpus\EdlibResourceKitProvider;
 
 use Cerpus\EdlibResourceKit\Resource\ResourceManagerInterface;
 use Cerpus\EdlibResourceKit\ResourceKit;
+use Cerpus\EdlibResourceKit\ResourceKitInterface;
 use Cerpus\EdlibResourceKit\ResourceVersion\ResourceVersionManagerInterface;
 use Cerpus\EdlibResourceKit\Serializer\ResourceSerializer;
 use Cerpus\PubSub\Connection\ConnectionFactory;
@@ -34,7 +35,7 @@ class EdlibResourceKitServiceProvider extends BaseServiceProvider implements Def
     public function provides(): array
     {
         return [
-            ResourceKit::class,
+            ResourceKitInterface::class,
             ResourceManagerInterface::class,
             ResourceVersionManagerInterface::class,
         ];
@@ -46,19 +47,19 @@ class EdlibResourceKitServiceProvider extends BaseServiceProvider implements Def
 
         $this->app->singleton(ResourceManagerInterface::class, function () {
             /** @var ResourceKit $resourceKit */
-            $resourceKit = $this->app->make(ResourceKit::class);
+            $resourceKit = $this->app->make(ResourceKitInterface::class);
 
             return $resourceKit->getResourceManager();
         });
 
         $this->app->singleton(ResourceVersionManagerInterface::class, function () {
             /** @var ResourceKit $resourceKit */
-            $resourceKit = $this->app->make(ResourceKit::class);
+            $resourceKit = $this->app->make(ResourceKitInterface::class);
 
             return $resourceKit->getResourceVersionManager();
         });
 
-        $this->app->singleton(ResourceKit::class, function () {
+        $this->app->singleton(ResourceKitInterface::class, function () {
             return new ResourceKit(
                 $this->createPubSub(),
                 $this->createHttpClient(),
