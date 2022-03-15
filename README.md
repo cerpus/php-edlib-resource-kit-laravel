@@ -7,7 +7,8 @@ with Laravel.
 
 * PHP 8.0 or PHP 8.1
 * Laravel 9
-* A PSR-18 compatible HTTP client, like Guzzle 7.
+* A PSR-18 compatible HTTP client (e.g. Guzzle 7)
+* PSR-17 compatible HTTP message factories (included with Guzzle 7)
 
 ## Installation
 
@@ -15,10 +16,12 @@ with Laravel.
 composer require cerpus/edlib-resource-kit-laravel
 ~~~
 
-If using Guzzle 6, you will also need an adapter:
+If using Guzzle 6, you will also need some adapters:
 
 ~~~sh
-composer require cerpus/edlib-resource-kit-laravel php-http/guzzle6-adapter
+composer require cerpus/edlib-resource-kit-laravel \
+    http-interop/http-factory-guzzle \
+    php-http/guzzle6-adapter
 ~~~
 
 ## Configuration
@@ -29,8 +32,9 @@ First publish the configuration:
 php artisan vendor:publish --provider="Cerpus\EdlibResourceKitProvider\EdlibResourceKitServiceProvider"
 ~~~
 
-It is required to configure RabbitMQ. Now edit `config/edlib-resource-kit.php`, or
-provide the expected environment variables, to match your infrastructure.
+For asynchronous publishing, it is required to configure RabbitMQ. Edit
+`config/edlib-resource-kit.php`, or provide the expected environment variables
+to match your infrastructure.
 
 If using [cerpus/laravel-rabbitmq-pubsub](https://github.com/cerpus/php-laravel-rabbitmq-pubsub),
 you can reuse its configuration:
@@ -40,6 +44,16 @@ you can reuse its configuration:
 
 return [
     'pub-sub' => Cerpus\PubSub\PubSub::class,
+];
+~~~
+
+For synchronous publishing, it is sufficient to provide the following config:
+
+~~~php
+<?php
+
+return [
+    'synchronous-resource-manager' => true,
 ];
 ~~~
 

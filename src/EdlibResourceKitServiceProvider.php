@@ -19,6 +19,7 @@ use Illuminate\Contracts\Support\DeferrableProvider;
 use Illuminate\Support\ServiceProvider as BaseServiceProvider;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
+use Psr\Http\Message\StreamFactoryInterface;
 use function is_array;
 
 class EdlibResourceKitServiceProvider extends BaseServiceProvider implements DeferrableProvider
@@ -60,11 +61,16 @@ class EdlibResourceKitServiceProvider extends BaseServiceProvider implements Def
         });
 
         $this->app->singleton(ResourceKitInterface::class, function () {
+            $synchronousResourceManager = (bool) $this->app->make('config')
+                ->get('edlib-resource-kit.synchronous-resource-manager', false);
+
             return new ResourceKit(
-                $this->createPubSub(),
+                $synchronousResourceManager ? null : $this->createPubSub(),
                 $this->createHttpClient(),
                 $this->createRequestFactory(),
                 $this->createResourceSerializer(),
+                $this->createStreamFactory(),
+                $synchronousResourceManager,
             );
         });
     }
@@ -97,22 +103,22 @@ class EdlibResourceKitServiceProvider extends BaseServiceProvider implements Def
         $httpClientService = $this->app->make('config')
             ->get('edlib-resource-kit.http-client');
 
-        if ($httpClientService === null) {
-            if (
-                class_exists(\GuzzleHttp\ClientInterface::class) &&
-                \GuzzleHttp\ClientInterface::MAJOR_VERSION === 7
-            ) {
-                try {
-                    // try using Guzzle 7
-                    return $this->app->make(Client::class);
-                } catch (BindingResolutionException) {
-                }
-            }
-
-            return Psr18ClientDiscovery::find();
+        if ($httpClientService) {
+            return $this->app->make($httpClientService);
         }
 
-        return $this->app->make($httpClientService);
+        if (
+            class_exists(\GuzzleHttp\ClientInterface::class) &&
+            \GuzzleHttp\ClientInterface::MAJOR_VERSION === 7
+        ) {
+            try {
+                // try using Guzzle 7
+                return $this->app->make(Client::class);
+            } catch (BindingResolutionException) {
+            }
+        }
+
+        return Psr18ClientDiscovery::find();
     }
 
     private function createRequestFactory(): RequestFactoryInterface
@@ -120,18 +126,30 @@ class EdlibResourceKitServiceProvider extends BaseServiceProvider implements Def
         $requestFactoryService = $this->app->make('config')
             ->get('edlib-resource-kit.request-factory');
 
-        if ($requestFactoryService === null) {
-            return Psr17FactoryDiscovery::findRequestFactory();
+        if ($requestFactoryService) {
+            return $this->app->make($requestFactoryService);
         }
 
-        return $this->app->make($requestFactoryService);
+        return Psr17FactoryDiscovery::findRequestFactory();
+    }
+
+    private function createStreamFactory(): StreamFactoryInterface
+    {
+        $streamFactoryService = $this->app->make('config')
+            ->get('edlib-resource-kit.stream-factory');
+
+        if ($streamFactoryService) {
+            return $this->app->make($streamFactoryService);
+        }
+
+        return Psr17FactoryDiscovery::findStreamFactory();
     }
 
     private function createResourceSerializer(): ResourceSerializer
     {
-        return $this->app->make(
-            $this->app->make('config')->get('edlib-resource-kit.resource-serializer')
-                ?? ResourceSerializer::class,
-        );
+        $serializerService = $this->app->make('config')
+            ->get('edlib-resource-kit.resource-serializer');
+
+        return $this->app->make($serializerService ?? ResourceSerializer::class);
     }
 }

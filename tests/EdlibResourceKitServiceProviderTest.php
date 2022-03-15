@@ -21,6 +21,16 @@ final class EdlibResourceKitServiceProviderTest extends TestCase
         $this->assertResourceKitResolves();
     }
 
+    public function testSynchronousResourceManager(): void
+    {
+        $this->app->make('config')
+            ->set('edlib-resource-kit', [
+                'synchronous-resource-manager' => true,
+            ]);
+
+        $this->assertResourceKitResolves();
+    }
+
     public function testGetResourceManager(): void
     {
         $this->usePubSubMock();
