@@ -4,6 +4,21 @@ declare(strict_types=1);
 
 namespace Cerpus\EdlibResourceKitProvider\Tests;
 
+use Cerpus\EdlibResourceKit\Lti\ContentItem\ContentItems;
+use Cerpus\EdlibResourceKit\Lti\ContentItem\Mapper\ContentItemsMapper;
+use Cerpus\EdlibResourceKit\Lti\ContentItem\Mapper\ContentItemsMapperInterface;
+use Cerpus\EdlibResourceKit\Lti\ContentItem\Serializer\ContentItemPlacementSerializer;
+use Cerpus\EdlibResourceKit\Lti\ContentItem\Serializer\ContentItemPlacementSerializerInterface;
+use Cerpus\EdlibResourceKit\Lti\ContentItem\Serializer\ContentItemSerializer;
+use Cerpus\EdlibResourceKit\Lti\ContentItem\Serializer\ContentItemSerializerInterface;
+use Cerpus\EdlibResourceKit\Lti\ContentItem\Serializer\ContentItemsSerializer;
+use Cerpus\EdlibResourceKit\Lti\ContentItem\Serializer\ContentItemsSerializerInterface;
+use Cerpus\EdlibResourceKit\Lti\ContentItem\Serializer\FileItemSerializer;
+use Cerpus\EdlibResourceKit\Lti\ContentItem\Serializer\FileItemSerializerInterface;
+use Cerpus\EdlibResourceKit\Lti\ContentItem\Serializer\ImageSerializer;
+use Cerpus\EdlibResourceKit\Lti\ContentItem\Serializer\ImageSerializerInterface;
+use Cerpus\EdlibResourceKit\Lti\ContentItem\Serializer\LtiLinkItemSerializer;
+use Cerpus\EdlibResourceKit\Lti\ContentItem\Serializer\LtiLinkItemSerializerInterface;
 use Cerpus\EdlibResourceKit\Resource\ResourceManagerInterface;
 use Cerpus\EdlibResourceKit\ResourceKitInterface;
 use Cerpus\EdlibResourceKit\ResourceVersion\ResourceVersionManagerInterface;
@@ -13,6 +28,7 @@ use Cerpus\PubSub\PubSub;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Psr\Http\Client\ClientInterface;
 use TypeError;
+use function class_exists;
 
 final class EdlibResourceKitServiceProviderTest extends TestCase
 {
@@ -125,6 +141,42 @@ final class EdlibResourceKitServiceProviderTest extends TestCase
         $this->expectException(TypeError::class);
 
         $this->app->make(ResourceKitInterface::class);
+    }
+
+    public function testHasContentItemMappersAndSerializers(): void
+    {
+        if (!class_exists(ContentItems::class)) {
+            $this->markTestSkipped('Older version of Edlib Resource Kit installed, skipping');
+        }
+
+        $this->assertInstanceOf(
+            ContentItemsMapper::class,
+            $this->app->make(ContentItemsMapperInterface::class),
+        );
+        $this->assertInstanceOf(
+            ContentItemPlacementSerializer::class,
+            $this->app->make(ContentItemPlacementSerializerInterface::class),
+        );
+        $this->assertSame(
+            ContentItemSerializer::class,
+            $this->app->make(ContentItemSerializerInterface::class)::class,
+        );
+        $this->assertInstanceOf(
+            ContentItemsSerializer::class,
+            $this->app->make(ContentItemsSerializerInterface::class),
+        );
+        $this->assertInstanceOf(
+            FileItemSerializer::class,
+            $this->app->make(FileItemSerializerInterface::class),
+        );
+        $this->assertInstanceOf(
+            ImageSerializer::class,
+            $this->app->make(ImageSerializerInterface::class),
+        );
+        $this->assertInstanceOf(
+            LtiLinkItemSerializer::class,
+            $this->app->make(LtiLinkItemSerializerInterface::class),
+        );
     }
 
     private function assertResourceKitResolves(): void
