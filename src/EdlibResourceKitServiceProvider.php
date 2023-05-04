@@ -4,6 +4,21 @@ declare(strict_types=1);
 
 namespace Cerpus\EdlibResourceKitProvider;
 
+use Cerpus\EdlibResourceKit\Lti\ContentItem\ContentItems;
+use Cerpus\EdlibResourceKit\Lti\ContentItem\Mapper\ContentItemsMapper;
+use Cerpus\EdlibResourceKit\Lti\ContentItem\Mapper\ContentItemsMapperInterface;
+use Cerpus\EdlibResourceKit\Lti\ContentItem\Serializer\ContentItemPlacementSerializer;
+use Cerpus\EdlibResourceKit\Lti\ContentItem\Serializer\ContentItemPlacementSerializerInterface;
+use Cerpus\EdlibResourceKit\Lti\ContentItem\Serializer\ContentItemSerializer;
+use Cerpus\EdlibResourceKit\Lti\ContentItem\Serializer\ContentItemSerializerInterface;
+use Cerpus\EdlibResourceKit\Lti\ContentItem\Serializer\ContentItemsSerializer;
+use Cerpus\EdlibResourceKit\Lti\ContentItem\Serializer\ContentItemsSerializerInterface;
+use Cerpus\EdlibResourceKit\Lti\ContentItem\Serializer\FileItemSerializer;
+use Cerpus\EdlibResourceKit\Lti\ContentItem\Serializer\FileItemSerializerInterface;
+use Cerpus\EdlibResourceKit\Lti\ContentItem\Serializer\ImageSerializer;
+use Cerpus\EdlibResourceKit\Lti\ContentItem\Serializer\ImageSerializerInterface;
+use Cerpus\EdlibResourceKit\Lti\ContentItem\Serializer\LtiLinkItemSerializer;
+use Cerpus\EdlibResourceKit\Lti\ContentItem\Serializer\LtiLinkItemSerializerInterface;
 use Cerpus\EdlibResourceKit\Resource\ResourceManagerInterface;
 use Cerpus\EdlibResourceKit\ResourceKit;
 use Cerpus\EdlibResourceKit\ResourceKitInterface;
@@ -20,6 +35,7 @@ use Illuminate\Support\ServiceProvider as BaseServiceProvider;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
 use Psr\Http\Message\StreamFactoryInterface;
+use function class_exists;
 use function is_array;
 
 class EdlibResourceKitServiceProvider extends BaseServiceProvider implements DeferrableProvider
@@ -73,6 +89,37 @@ class EdlibResourceKitServiceProvider extends BaseServiceProvider implements Def
                 $synchronousResourceManager,
             );
         });
+
+        if (class_exists(ContentItems::class)) {
+            $this->app->singleton(
+                ContentItemsMapperInterface::class,
+                ContentItemsMapper::class,
+            );
+            $this->app->singleton(
+                ContentItemsSerializerInterface::class,
+                ContentItemsSerializer::class,
+            );
+            $this->app->singleton(
+                ContentItemPlacementSerializerInterface::class,
+                ContentItemPlacementSerializer::class,
+            );
+            $this->app->singleton(
+                ContentItemSerializerInterface::class,
+                ContentItemSerializer::class,
+            );
+            $this->app->singleton(
+                FileItemSerializerInterface::class,
+                FileItemSerializer::class,
+            );
+            $this->app->singleton(
+                ImageSerializerInterface::class,
+                ImageSerializer::class,
+            );
+            $this->app->singleton(
+                LtiLinkItemSerializerInterface::class,
+                LtiLinkItemSerializer::class,
+            );
+        }
     }
 
     private function createPubSub(): PubSub|ConnectionFactory
