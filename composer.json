@@ -3,6 +3,10 @@
     "description": "Integrate Edlib Resource Kit with Laravel",
     "homepage": "https://edlib.com/",
     "license": "GPL-3.0-only",
+    "support": {
+        "docs": "https://docs.edlib.com/",
+        "issues": "https://github.com/cerpus/Edlib/issues"
+    },
     "authors": [
         {
             "name": "Emma Cecilie Hughes",
