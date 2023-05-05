@@ -1,5 +1,7 @@
 # Edlib Resource Kit integration for Laravel
 
+[![codecov](https://codecov.io/github/cerpus/php-edlib-resource-kit-laravel/branch/master/graph/badge.svg?token=FCQU299HRX)](https://codecov.io/github/cerpus/php-edlib-resource-kit-laravel)
+
 Integrates [Edlib Resource Kit](https://github.com/cerpus/php-edlib-resource-kit)
 with Laravel.
 
@@ -96,12 +98,6 @@ class Article extends Model implements EdlibResource
 
 With the `PublishToEdlib` trait used, Edlib will now be notified upon changes to
 the resource.
-
-## Declared services
-
-* `Cerpus\EdlibResourceKit\ResourceKitInterface`
-* `Cerpus\EdlibResourceKit\Resource\ResourceManagerInterface`
-* `Cerpus\EdlibResourceKit\ResourceVersion\ResourceVersionManagerInterface`
 
 ## License
 
