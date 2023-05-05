@@ -2,13 +2,8 @@
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          bootstrap="vendor/autoload.php"
          colors="true"
-         verbose="true"
-         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd">
-    <coverage>
-        <include>
-            <directory suffix=".php">src/</directory>
-        </include>
-    </coverage>
+         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.1/phpunit.xsd"
+         cacheDirectory=".phpunit.cache">
     <testsuites>
         <testsuite name="Cerpus\EdlibResourceKitLaravel Test Suite">
             <directory suffix="Test.php">tests</directory>
@@ -20,4 +15,9 @@
         <env name="RABBITMQ_USERNAME" value="guest" />
         <env name="RABBITMQ_PASSWORD" value="guest" />
     </php>
+    <source>
+        <include>
+            <directory suffix=".php">src/</directory>
+        </include>
+    </source>
 </phpunit>
