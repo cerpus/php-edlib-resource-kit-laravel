@@ -35,6 +35,7 @@ use Illuminate\Support\ServiceProvider as BaseServiceProvider;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
 use Psr\Http\Message\StreamFactoryInterface;
+use function array_merge;
 use function class_exists;
 use function is_array;
 
@@ -51,11 +52,25 @@ class EdlibResourceKitServiceProvider extends BaseServiceProvider implements Def
 
     public function provides(): array
     {
-        return [
+        $provides = [
             ResourceKitInterface::class,
             ResourceManagerInterface::class,
             ResourceVersionManagerInterface::class,
         ];
+
+        if (class_exists(ContentItems::class)) {
+            $provides = array_merge($provides, [
+                ContentItemsMapperInterface::class,
+                ContentItemsSerializerInterface::class,
+                ContentItemPlacementSerializerInterface::class,
+                ContentItemSerializerInterface::class,
+                FileItemSerializerInterface::class,
+                ImageSerializerInterface::class,
+                LtiLinkItemSerializerInterface::class,
+            ]);
+        }
+
+        return $provides;
     }
 
     public function register(): void
