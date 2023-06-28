@@ -1,0 +1,20 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Cerpus\EdlibResourceKitProvider\Internal;
+
+use Carbon\CarbonImmutable;
+use DateTimeImmutable;
+use Psr\Clock\ClockInterface;
+
+/**
+ * @internal This should not be used outside cerpus/edlib-resource-kit-provider
+ */
+final class Clock implements ClockInterface
+{
+    public function now(): DateTimeImmutable
+    {
+        return CarbonImmutable::now();
+    }
+}

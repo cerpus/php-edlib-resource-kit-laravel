@@ -19,16 +19,23 @@ use Cerpus\EdlibResourceKit\Lti\ContentItem\Serializer\ImageSerializer;
 use Cerpus\EdlibResourceKit\Lti\ContentItem\Serializer\ImageSerializerInterface;
 use Cerpus\EdlibResourceKit\Lti\ContentItem\Serializer\LtiLinkItemSerializer;
 use Cerpus\EdlibResourceKit\Lti\ContentItem\Serializer\LtiLinkItemSerializerInterface;
+use Cerpus\EdlibResourceKit\Oauth1\CredentialStoreInterface;
+use Cerpus\EdlibResourceKit\Oauth1\Signer;
+use Cerpus\EdlibResourceKit\Oauth1\SignerInterface;
+use Cerpus\EdlibResourceKit\Oauth1\Validator;
+use Cerpus\EdlibResourceKit\Oauth1\ValidatorInterface;
 use Cerpus\EdlibResourceKit\Resource\ResourceManagerInterface;
 use Cerpus\EdlibResourceKit\ResourceKitInterface;
 use Cerpus\EdlibResourceKit\ResourceVersion\ResourceVersionManagerInterface;
 use Cerpus\EdlibResourceKit\Serializer\ResourceSerializer;
+use Cerpus\EdlibResourceKitProvider\Internal\NullCredentialStore;
 use Cerpus\PubSub\Connection\ConnectionFactory;
 use Cerpus\PubSub\PubSub;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Psr\Http\Client\ClientInterface;
 use TypeError;
 use function class_exists;
+use function interface_exists;
 
 final class EdlibResourceKitServiceProviderTest extends TestCase
 {
@@ -176,6 +183,28 @@ final class EdlibResourceKitServiceProviderTest extends TestCase
         $this->assertInstanceOf(
             LtiLinkItemSerializer::class,
             $this->app->make(LtiLinkItemSerializerInterface::class),
+        );
+    }
+
+    public function testHasOauth1Services(): void
+    {
+        if (!interface_exists(SignerInterface::class)) {
+            $this->markTestSkipped('Older version of Edlib Resource Kit installed, skipping');
+        }
+
+        $this->assertInstanceOf(
+            NullCredentialStore::class,
+            $this->app->make(CredentialStoreInterface::class),
+        );
+
+        $this->assertInstanceOf(
+            Signer::class,
+            $this->app->make(SignerInterface::class),
+        );
+
+        $this->assertInstanceOf(
+            Validator::class,
+            $this->app->make(ValidatorInterface::class),
         );
     }
 

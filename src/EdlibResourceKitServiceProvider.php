@@ -19,11 +19,18 @@ use Cerpus\EdlibResourceKit\Lti\ContentItem\Serializer\ImageSerializer;
 use Cerpus\EdlibResourceKit\Lti\ContentItem\Serializer\ImageSerializerInterface;
 use Cerpus\EdlibResourceKit\Lti\ContentItem\Serializer\LtiLinkItemSerializer;
 use Cerpus\EdlibResourceKit\Lti\ContentItem\Serializer\LtiLinkItemSerializerInterface;
+use Cerpus\EdlibResourceKit\Oauth1\CredentialStoreInterface;
+use Cerpus\EdlibResourceKit\Oauth1\Signer;
+use Cerpus\EdlibResourceKit\Oauth1\SignerInterface;
+use Cerpus\EdlibResourceKit\Oauth1\Validator;
+use Cerpus\EdlibResourceKit\Oauth1\ValidatorInterface;
 use Cerpus\EdlibResourceKit\Resource\ResourceManagerInterface;
 use Cerpus\EdlibResourceKit\ResourceKit;
 use Cerpus\EdlibResourceKit\ResourceKitInterface;
 use Cerpus\EdlibResourceKit\ResourceVersion\ResourceVersionManagerInterface;
 use Cerpus\EdlibResourceKit\Serializer\ResourceSerializer;
+use Cerpus\EdlibResourceKitProvider\Internal\Clock;
+use Cerpus\EdlibResourceKitProvider\Internal\NullCredentialStore;
 use Cerpus\PubSub\Connection\ConnectionFactory;
 use Cerpus\PubSub\PubSub;
 use GuzzleHttp\Client;
@@ -32,11 +39,13 @@ use Http\Discovery\Psr18ClientDiscovery;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Contracts\Support\DeferrableProvider;
 use Illuminate\Support\ServiceProvider as BaseServiceProvider;
+use Psr\Clock\ClockInterface;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
 use Psr\Http\Message\StreamFactoryInterface;
 use function array_merge;
 use function class_exists;
+use function interface_exists;
 use function is_array;
 
 class EdlibResourceKitServiceProvider extends BaseServiceProvider implements DeferrableProvider
@@ -67,6 +76,14 @@ class EdlibResourceKitServiceProvider extends BaseServiceProvider implements Def
                 FileItemSerializerInterface::class,
                 ImageSerializerInterface::class,
                 LtiLinkItemSerializerInterface::class,
+            ]);
+        }
+
+        if (class_exists(SignerInterface::class)) {
+            $provides = array_merge($provides, [
+                CredentialStoreInterface::class,
+                SignerInterface::class,
+                ValidatorInterface::class,
             ]);
         }
 
@@ -134,6 +151,18 @@ class EdlibResourceKitServiceProvider extends BaseServiceProvider implements Def
                 LtiLinkItemSerializerInterface::class,
                 LtiLinkItemSerializer::class,
             );
+        }
+
+        if (interface_exists(SignerInterface::class)) {
+            assert(PHP_VERSION_ID >= 80200);
+
+            $this->app->singleton(SignerInterface::class, Signer::class);
+            $this->app->singleton(ValidatorInterface::class, Validator::class);
+            $this->app->singletonIf(CredentialStoreInterface::class, NullCredentialStore::class);
+
+            // for compatibility
+            $this->app->singletonIf(ClockInterface::class, Clock::class);
+            $this->app->singletonIf(\Random\Randomizer::class);
         }
     }
 
