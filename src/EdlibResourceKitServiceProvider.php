@@ -79,7 +79,7 @@ class EdlibResourceKitServiceProvider extends BaseServiceProvider implements Def
             ]);
         }
 
-        if (class_exists(SignerInterface::class)) {
+        if (interface_exists(SignerInterface::class)) {
             $provides = array_merge($provides, [
                 CredentialStoreInterface::class,
                 SignerInterface::class,
