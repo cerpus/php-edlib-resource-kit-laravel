@@ -22,15 +22,11 @@ jobs:
                 include:
                     -   php-version: '8.2'
                         laravel-constraint: '^10'
-                        erk-constraint: '0.5.x-dev'
+                        erk-constraint: '0.6.x-dev'
 
                     -   php-version: '8.2'
-                        laravel-constraint: '^10'
-                        erk-constraint: '^0.5'
-
-                    -   php-version: '8.1'
-                        laravel-constraint: '^9.0'
-                        erk-constraint: '^0.5'
+                        laravel-constraint: '^9'
+                        erk-constraint: '^0.6.x-dev'
 
         steps:
             -   name: Checkout
