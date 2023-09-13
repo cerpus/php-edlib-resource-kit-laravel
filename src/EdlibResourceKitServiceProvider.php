@@ -36,6 +36,7 @@ use Cerpus\EdlibResourceKit\ResourceVersion\ResourceVersionManagerInterface;
 use Cerpus\EdlibResourceKit\Serializer\ResourceSerializer;
 use Cerpus\EdlibResourceKitProvider\Internal\Clock;
 use Cerpus\EdlibResourceKitProvider\Internal\NullCredentialStore;
+use Cerpus\EdlibResourceKitProvider\Oauth1\MemoizedValidator;
 use Cerpus\PubSub\Connection\ConnectionFactory;
 use Cerpus\PubSub\PubSub;
 use GuzzleHttp\Client;
@@ -139,8 +140,11 @@ class EdlibResourceKitServiceProvider extends BaseServiceProvider implements Def
 
         // OAuth 1.0 services
         $this->app->singleton(SignerInterface::class, Signer::class);
-        $this->app->singleton(ValidatorInterface::class, Validator::class);
+        $this->app->singleton(ValidatorInterface::class, MemoizedValidator::class);
         $this->app->singletonIf(CredentialStoreInterface::class, NullCredentialStore::class);
+        $this->app->when(MemoizedValidator::class)
+            ->needs(ValidatorInterface::class)
+            ->give(Validator::class);
 
         // for compatibility
         $this->app->singletonIf(ClockInterface::class, Clock::class);

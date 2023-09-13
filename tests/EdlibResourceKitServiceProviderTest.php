@@ -27,13 +27,13 @@ use Cerpus\EdlibResourceKit\Lti\Lti11\Serializer\DeepLinking\LtiLinkItemSerializ
 use Cerpus\EdlibResourceKit\Oauth1\CredentialStoreInterface;
 use Cerpus\EdlibResourceKit\Oauth1\Signer;
 use Cerpus\EdlibResourceKit\Oauth1\SignerInterface;
-use Cerpus\EdlibResourceKit\Oauth1\Validator;
 use Cerpus\EdlibResourceKit\Oauth1\ValidatorInterface;
 use Cerpus\EdlibResourceKit\Resource\ResourceManagerInterface;
 use Cerpus\EdlibResourceKit\ResourceKitInterface;
 use Cerpus\EdlibResourceKit\ResourceVersion\ResourceVersionManagerInterface;
 use Cerpus\EdlibResourceKit\Serializer\ResourceSerializer;
 use Cerpus\EdlibResourceKitProvider\Internal\NullCredentialStore;
+use Cerpus\EdlibResourceKitProvider\Oauth1\MemoizedValidator;
 use Cerpus\PubSub\Connection\ConnectionFactory;
 use Cerpus\PubSub\PubSub;
 use Generator;
@@ -194,7 +194,7 @@ final class EdlibResourceKitServiceProviderTest extends TestCase
 
         // OAuth 1.0 services
         yield 'oauth 1.0 credential store' => [NullCredentialStore::class, CredentialStoreInterface::class];
-        yield 'oauth 1.0 validator' => [Validator::class, ValidatorInterface::class];
+        yield 'oauth 1.0 validator' => [MemoizedValidator::class, ValidatorInterface::class];
         yield 'oauth 1.0 signer' => [Signer::class, SignerInterface::class];
     }
 }
