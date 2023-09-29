@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Cerpus\EdlibResourceKitProvider\Tests\Oauth1;
 
 use Cerpus\EdlibResourceKit\Oauth1\Claim;
+use Cerpus\EdlibResourceKit\Oauth1\Credentials;
 use Cerpus\EdlibResourceKit\Oauth1\Exception\ValidationException;
 use Cerpus\EdlibResourceKit\Oauth1\Request as Oauth1Request;
 use Cerpus\EdlibResourceKit\Oauth1\ValidatorInterface;
@@ -38,8 +39,10 @@ final class MemoizedValidatorTest extends TestCase
             ->method('validate')
             ->with($oauth1Request);
 
-        $this->memoizedValidator->validate($oauth1Request);
-        $this->memoizedValidator->validate($oauth1Request);
+        $this->memoizedValidator->validate(
+            $oauth1Request,
+            new Credentials('foo', 'bar'),
+        );
     }
 
     public function testDoesNotMemoizeValidationFailures(): void
@@ -53,12 +56,18 @@ final class MemoizedValidatorTest extends TestCase
             ->willThrowException(new ValidationException());
 
         try {
-            $this->memoizedValidator->validate($oauth1Request);
+            $this->memoizedValidator->validate(
+                $oauth1Request,
+                new Credentials('foo', 'bar'),
+            );
         } catch (ValidationException) {
         }
 
         try {
-            $this->memoizedValidator->validate($oauth1Request);
+            $this->memoizedValidator->validate(
+                $oauth1Request,
+                new Credentials('foo', 'bar'),
+            );
         } catch (ValidationException) {
         }
     }

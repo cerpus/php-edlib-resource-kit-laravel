@@ -25,7 +25,7 @@
     },
     "require": {
         "php": "8.2.*",
-        "cerpus/edlib-resource-kit": "^0.6",
+        "cerpus/edlib-resource-kit": "^0.7",
         "cerpus/pubsub": "^1.0",
         "illuminate/support": "^9.0|^10.0",
         "php-http/discovery": "^1.14",

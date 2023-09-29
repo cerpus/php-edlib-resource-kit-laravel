@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Cerpus\EdlibResourceKitProvider\Oauth1;
 
 use Cerpus\EdlibResourceKit\Oauth1\Claim;
+use Cerpus\EdlibResourceKit\Oauth1\CredentialStoreInterface;
 use Cerpus\EdlibResourceKit\Oauth1\Request as Oauth1Request;
 use Cerpus\EdlibResourceKit\Oauth1\ValidatorInterface;
 use Illuminate\Http\Request;
@@ -21,8 +22,10 @@ final readonly class MemoizedValidator implements ValidatorInterface
     ) {
     }
 
-    public function validate(Oauth1Request $request): void
-    {
+    public function validate(
+        Oauth1Request $request,
+        CredentialStoreInterface $credentialStore,
+    ): void {
         $key = $request->has(Claim::SIGNATURE)
             ? $request->get(Claim::SIGNATURE)
             : null;
@@ -31,7 +34,7 @@ final readonly class MemoizedValidator implements ValidatorInterface
             return;
         }
 
-        $this->validator->validate($request);
+        $this->validator->validate($request, $credentialStore);
 
         if ($key !== null) {
             // valid signatures are always derived from a secret and randomly
