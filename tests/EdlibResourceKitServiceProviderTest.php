@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Cerpus\EdlibResourceKitProvider\Tests;
 
+use Cerpus\EdlibResourceKit\Lti\Edlib\DeepLinking\EdlibContentItemMapper;
+use Cerpus\EdlibResourceKit\Lti\Edlib\DeepLinking\EdlibContentItemsSerializer;
+use Cerpus\EdlibResourceKit\Lti\Edlib\DeepLinking\EdlibLtiLinkItemSerializer;
 use Cerpus\EdlibResourceKit\Lti\Lti11\Mapper\DeepLinking\ContentItemMapper;
 use Cerpus\EdlibResourceKit\Lti\Lti11\Mapper\DeepLinking\ContentItemMapperInterface;
 use Cerpus\EdlibResourceKit\Lti\Lti11\Mapper\DeepLinking\ContentItemsMapper;
@@ -41,6 +44,7 @@ use Illuminate\Contracts\Container\BindingResolutionException;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Psr\Http\Client\ClientInterface;
 use TypeError;
+use function class_exists;
 
 final class EdlibResourceKitServiceProviderTest extends TestCase
 {
@@ -161,6 +165,18 @@ final class EdlibResourceKitServiceProviderTest extends TestCase
         $this->assertInstanceOf($concrete, $this->app->make($abstract));
     }
 
+    #[DataProvider('provideEdlibExtensions')]
+    public function testInstantiatesEdlibExtensions(string $concrete, string $abstract): void
+    {
+        if (!class_exists(EdlibContentItemsSerializer::class)) {
+            $this->markTestSkipped('Edlib extensions are not available');
+        }
+
+        $this->app->make('config')->set('edlib-resource-kit.use-edlib-extensions', true);
+
+        $this->assertInstanceOf($concrete, $this->app->make($abstract));
+    }
+
     private function assertResourceKitResolves(): void
     {
         $this->assertInstanceOf(
@@ -196,5 +212,12 @@ final class EdlibResourceKitServiceProviderTest extends TestCase
         yield 'oauth 1.0 credential store' => [NullCredentialStore::class, CredentialStoreInterface::class];
         yield 'oauth 1.0 validator' => [MemoizedValidator::class, ValidatorInterface::class];
         yield 'oauth 1.0 signer' => [Signer::class, SignerInterface::class];
+    }
+
+    public static function provideEdlibExtensions(): Generator
+    {
+        yield 'content-item mapper' => [EdlibContentItemMapper::class, ContentItemMapperInterface::class];
+        yield 'content-item serializer' => [EdlibContentItemsSerializer::class, ContentItemsSerializerInterface::class];
+        yield 'LtiLinkItem serializer' => [EdlibLtiLinkItemSerializer::class, LtiLinkItemSerializerInterface::class];
     }
 }

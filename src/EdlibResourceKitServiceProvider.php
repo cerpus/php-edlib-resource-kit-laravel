@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Cerpus\EdlibResourceKitProvider;
 
+use Cerpus\EdlibResourceKit\Lti\Edlib\DeepLinking\EdlibContentItemMapper;
+use Cerpus\EdlibResourceKit\Lti\Edlib\DeepLinking\EdlibContentItemsSerializer;
+use Cerpus\EdlibResourceKit\Lti\Edlib\DeepLinking\EdlibLtiLinkItemSerializer;
 use Cerpus\EdlibResourceKit\Lti\Lti11\Mapper\DeepLinking\ContentItemMapper;
 use Cerpus\EdlibResourceKit\Lti\Lti11\Mapper\DeepLinking\ContentItemMapperInterface;
 use Cerpus\EdlibResourceKit\Lti\Lti11\Mapper\DeepLinking\ContentItemsMapper;
@@ -50,6 +53,7 @@ use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
 use Psr\Http\Message\StreamFactoryInterface;
 use Random\Randomizer;
+use RuntimeException;
 use function class_exists;
 use function is_array;
 
@@ -126,17 +130,17 @@ class EdlibResourceKitServiceProvider extends BaseServiceProvider implements Def
 
         // LTI 1.1 mappers
         $this->app->singleton(ContentItemsMapperInterface::class, ContentItemsMapper::class);
-        $this->app->singleton(ContentItemMapperInterface::class, ContentItemMapper::class);
+        $this->app->singleton(ContentItemMapperInterface::class, $this->createContentItemMapper(...));
         $this->app->singleton(ImageMapperInterface::class, ImageMapper::class);
         $this->app->singleton(PlacementAdviceMapperInterface::class, PlacementAdviceMapper::class);
 
         // LTI 1.1 serializers
-        $this->app->singleton(ContentItemsSerializerInterface::class, ContentItemsSerializer::class);
+        $this->app->singleton(ContentItemsSerializerInterface::class, $this->createContentItemsSerializer(...));
         $this->app->singleton(ContentItemPlacementSerializerInterface::class, ContentItemPlacementSerializer::class);
         $this->app->singleton(ContentItemSerializerInterface::class, ContentItemSerializer::class);
         $this->app->singleton(FileItemSerializerInterface::class, FileItemSerializer::class);
         $this->app->singleton(ImageSerializerInterface::class, ImageSerializer::class);
-        $this->app->singleton(LtiLinkItemSerializerInterface::class, LtiLinkItemSerializer::class);
+        $this->app->singleton(LtiLinkItemSerializerInterface::class, $this->createLtiLinkItemSerializer(...));
 
         // OAuth 1.0 services
         $this->app->singleton(SignerInterface::class, Signer::class);
@@ -149,6 +153,66 @@ class EdlibResourceKitServiceProvider extends BaseServiceProvider implements Def
         // for compatibility
         $this->app->singletonIf(ClockInterface::class, Clock::class);
         $this->app->singletonIf(Randomizer::class);
+
+        if (class_exists(EdlibLtiLinkItemSerializer::class)) {
+            $this->app->when(EdlibContentItemMapper::class)
+                ->needs(ContentItemMapperInterface::class)
+                ->give(ContentItemMapper::class);
+
+            $this->app->when(EdlibContentItemsSerializer::class)
+                ->needs(ContentItemsSerializerInterface::class)
+                ->give(ContentItemsSerializer::class);
+
+            $this->app->when(EdlibLtiLinkItemSerializer::class)
+                ->needs(LtiLinkItemSerializerInterface::class)
+                ->give(LtiLinkItemSerializer::class);
+        }
+    }
+
+    private function assertHasOrDoesNotUseEdlibExtensions(): void
+    {
+        if (!$this->app->make('config')->get('edlib-resource-kit.use-edlib-extensions')) {
+            return;
+        }
+
+        if (!class_exists(EdlibContentItemMapper::class)) {
+            throw new RuntimeException(
+                'The installed version of cerpus/edlib-resource-kit must be upgraded to use Edlib extensions',
+            );
+        }
+    }
+
+    private function createContentItemMapper(): ContentItemMapperInterface
+    {
+        $this->assertHasOrDoesNotUseEdlibExtensions();
+
+        if ($this->app->make('config')->get('edlib-resource-kit.use-edlib-extensions')) {
+            return new EdlibContentItemMapper();
+        }
+
+        return $this->app->make(ContentItemMapper::class);
+    }
+
+    private function createContentItemsSerializer(): ContentItemsSerializerInterface
+    {
+        $this->assertHasOrDoesNotUseEdlibExtensions();
+
+        if ($this->app->make('config')->get('edlib-resource-kit.use-edlib-extensions')) {
+            return $this->app->make(EdlibContentItemsSerializer::class);
+        }
+
+        return $this->app->make(ContentItemsSerializer::class);
+    }
+
+    private function createLtiLinkItemSerializer(): LtiLinkItemSerializerInterface
+    {
+        $this->assertHasOrDoesNotUseEdlibExtensions();
+
+        if ($this->app->make('config')->get('edlib-resource-kit.use-edlib-extensions')) {
+            return $this->app->make(EdlibLtiLinkItemSerializer::class);
+        }
+
+        return $this->app->make(LtiLinkItemSerializer::class);
     }
 
     private function createPubSub(): PubSub|ConnectionFactory

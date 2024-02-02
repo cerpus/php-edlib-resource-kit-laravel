@@ -3,6 +3,11 @@
 return [
 
     //
+    // Register LTI Deep-Linking mappers/serializers that use Edlib extensions
+    //
+    'use-edlib-extensions' => false,
+
+    //
     // If false, resources will be published asynchronously over the message
     // bus. This is fast, but you get no feedback in the event that publishing
     // was unsuccessful.
