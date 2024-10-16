@@ -9,7 +9,7 @@ use DateTimeImmutable;
 use Psr\Clock\ClockInterface;
 
 /**
- * @internal This should not be used outside cerpus/edlib-resource-kit-provider
+ * @internal This should not be used outside cerpus/edlib-resource-kit-laravel
  */
 final class Clock implements ClockInterface
 {

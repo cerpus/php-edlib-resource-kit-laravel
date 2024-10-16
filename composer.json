@@ -25,12 +25,8 @@
     },
     "require": {
         "php": "8.2.*|8.3.*",
-        "cerpus/edlib-resource-kit": "^0.7",
-        "cerpus/pubsub": "^1.0",
-        "illuminate/support": "^9.0|^10.0|^11.0",
-        "php-http/discovery": "^1.14",
-        "psr/http-client-implementation": "^1.0",
-        "psr/http-factory-implementation": "^1.0"
+        "cerpus/edlib-resource-kit": "^0.8",
+        "illuminate/support": "^9.0|^10.0|^11.0"
     },
     "require-dev": {
         "guzzlehttp/guzzle": "^7.0",
@@ -41,19 +37,13 @@
         "psr/clock-implementation": "1.0"
     },
     "config": {
-        "sort-packages": true,
-        "allow-plugins": {
-            "php-http/discovery": true
-        },
-        "platform": {
-            "ext-sockets": "8.2.99"
-        }
+        "sort-packages": true
     },
     "minimum-stability": "dev",
     "prefer-stable": true,
     "extra": {
         "branch-alias": {
-            "dev-master": "0.7.x-dev"
+            "dev-master": "0.8.x-dev"
         },
         "laravel": {
             "providers": [
