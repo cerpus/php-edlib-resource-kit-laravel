@@ -24,12 +24,11 @@
         }
     },
     "require": {
-        "php": "8.2.*|8.3.*",
+        "php": "8.2.*|8.3.*|8.4.*",
         "cerpus/edlib-resource-kit": "^0.8",
         "illuminate/support": "^9.0|^10.0|^11.0"
     },
     "require-dev": {
-        "guzzlehttp/guzzle": "^7.0",
         "orchestra/testbench": "^6.0|^7.0|^8.0|^9.0",
         "symfony/clock": "^6.3|^7.0"
     },

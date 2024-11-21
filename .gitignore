@@ -1,4 +1,5 @@
 *.cache
+*.phar
 .idea
 composer.lock
 vendor

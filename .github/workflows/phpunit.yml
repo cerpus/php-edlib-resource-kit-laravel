@@ -20,6 +20,10 @@ jobs:
             fail-fast: false
             matrix:
                 include:
+                    -   php-version: '8.4'
+                        laravel-constraint: '^11'
+                        erk-constraint: '0.8.x-dev'
+
                     -   php-version: '8.3'
                         laravel-constraint: '^11'
                         erk-constraint: '0.8.x-dev'
