@@ -3,7 +3,8 @@
          bootstrap="vendor/autoload.php"
          colors="true"
          xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.1/phpunit.xsd"
-         cacheDirectory=".phpunit.cache">
+         cacheDirectory=".phpunit.cache"
+         displayDetailsOnTestsThatTriggerDeprecations="true">
     <testsuites>
         <testsuite name="Cerpus\EdlibResourceKitLaravel Test Suite">
             <directory suffix="Test.php">tests</directory>

@@ -7,7 +7,7 @@ with Laravel.
 
 ## Requirements
 
-* PHP 8.2 or 8.3
+* PHP 8.2, 8.3 or 8.4
 * Laravel 9, 10, or 11
 
 ## Installation
